@@ -41,3 +41,21 @@ async def send_otp(user_email: UserEmail = Body(default=None), redis=Depends(get
         return JSONResponse({"detail": "Email has not been sent."}, status_code=status.HTTP_400_BAD_REQUEST)
 
 
+@router.post("/send_notif_email", status_code=status.HTTP_200_OK)
+async def send_notif_email(user_info_email: UserInfoEmail = Body(default=None)):
+    try:
+        user_email = user_info_email.email
+        message_email = user_info_email.message
+        message = MessageSchema(
+            subject="Info",
+            recipients=[user_email],
+            body=message_email,
+            subtype=MessageType.plain,
+        )
+
+        fm = FastMail(conf)
+        await fm.send_message(message)
+        return JSONResponse({"detail": "Email has been sent successfully."})
+    except:
+        return JSONResponse({"detail": "Email has not been sent."}, status_code=status.HTTP_400_BAD_REQUEST)
+
