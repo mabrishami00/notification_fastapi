@@ -8,4 +8,4 @@ async def get_redis():
         client = redis.Redis.from_pool(pool)
         yield client
     finally:
-        await redis.close()
+        await client.close()
